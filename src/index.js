@@ -1,43 +1,56 @@
-const apiUrl = 'http://localhost:3000/ramens'
-const ramenMenuDiv = document.getElementById('ramen-menu')
-const newRamenForm = el('new-ramen')
-el('new-ramen').addEventListener('submit',newRamenHandler)
-fetch(apiUrl)
+const ramenAPI =  'http://localhost:3000/ramens'
+const addRamenForm = document.querySelector("#new-ramen")
+addRamenForm.addEventListener('submit', addNewRamen)
+fetch(ramenAPI)
 .then(response => response.json())
-.then(renderRamens)
+.then(data => {
+    data.forEach((data) =>{
+        renderRamens(data)
+    })
+})
 
-function renderRamens(ramens){
-    ramens.forEach(renderRamen);
-}
-function renderRamen(ramen){
-    const ramenImageElement = document.createElement('img');
-    ramenImageElement.src= ramen.image;
-    ramenMenuDiv.append(ramenImageElement);
+function renderRamens(data){
+    const ramenHeader = document.getElementById('ramen-menu')
+    ramenImage  =document.createElement('img')
+    ramenImage.src = data.image
+    ramenHeader.appendChild(ramenImage)
 
-    ramenImageElement.addEventListener('click' ,() => ramenClickHandler(ramen));
+    ramenImage.addEventListener('click', () => {
+        renderInfo(data)
+    })
 }
-function ramenClickHandler(ramen){
-    el('detail-image').src = ramen.image;
-    el('detail-name').textContent = ramen.name;
-    el('detail-restaurant').textContent=ramen.rating;
-    el('rating-display').textContent=ramen.rating
-    el('comment-display').textContent = ramen.comment;
+
+function renderInfo(data){
+    const ramenImage = document.getElementById('"detail-image"')
+    //ramenImage.src = data.image
+    const ramenName = document.getElementById("detail-name")
+    ramenName.textContent= data.name
+    const ramenRestaurant= document.getElementById("detail-restaurant")
+    ramenRestaurant.textContent= data.restaurant
+    const ramenRating = document.getElementById('rating-display')
+    ramenRating.textContent= data.rating
+    const comment = document.getElementById('comment-display')
+    comment.textContent= data.comment
+    const bigPicture = document.getElementById('detail-image')
+    bigPicture.src = data.image
 
 }
 function el(id){
-    return document.getElementById(id);
+    return document.getElementById(id)
 }
-function newRamenHandler(e){
+
+function addNewRamen(e){
     e.preventDefault();
-
+    
     const newRamen = {
-        name: e.target.name.value,
-        restaurant: e.target.restaurant.value,
-        image: e.target.image.value,
-        rating: e.target.rating.value,
-        comment: e.target['new-comment'].value,
+     name: e.target.name.value,
+     restaurant: e.target.restaurant.value,
+     image: e.target.image.value,
+     rating: e.target.rating.value,
+     comment: e.target['new-comment'].value,
     }
-    renderRamen(newRamen);
+    renderRamens(newRamen);
     e.target.reset();
-
 }
+
+
